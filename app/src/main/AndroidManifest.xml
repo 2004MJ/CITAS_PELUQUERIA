@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CITAS_PELUQUERIA">
         <activity
+            android:name=".Pantalla_Principal"
+            android:exported="false" />
+        <activity
             android:name=".SALAH"
             android:exported="false" />
         <activity
