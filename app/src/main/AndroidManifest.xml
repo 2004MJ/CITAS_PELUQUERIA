@@ -11,12 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CITAS_PELUQUERIA">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="TU_CLAVE_DE_API_VA_AQUI" />
+
         <activity
             android:name=".Pantalla_Principal"
             android:exported="false" />
-        <activity
-            android:name=".SALAH"
-            android:exported="false" />
+
         <activity
             android:name=".Login"
             android:exported="true">
