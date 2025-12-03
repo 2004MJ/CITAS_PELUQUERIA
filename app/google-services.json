@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "130205351874",
+    "project_id": "citapelu-c4922",
+    "storage_bucket": "citapelu-c4922.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:130205351874:android:9c0ebbd434c41d977ae05b",
+        "android_client_info": {
+          "package_name": "com.example.citas_peluqueria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpjgVKQ_sxrgeqwZ5PyAgbf6c2fFbffGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
