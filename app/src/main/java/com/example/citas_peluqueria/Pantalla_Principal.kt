@@ -10,6 +10,11 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.citas_peluqueria.databinding.ActivityPantallaPrincipalBinding
 import com.google.android.material.navigation.NavigationView
+import com.example.citas_peluqueria.api.Usuario
+import com.example.citas_peluqueria.api.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Pantalla_Principal : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -96,7 +101,33 @@ class Pantalla_Principal : AppCompatActivity(), NavigationView.OnNavigationItemS
                 binding.topAppBar.title = "Contáctanos"
             }
             R.id.nav_logout -> {
-                Toast.makeText(this, "Cerrando sesión...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Conectando (Versión Kotlin)...", Toast.LENGTH_SHORT).show()
+
+                // 1. Crear usuario (Sin "new", sintaxis limpia)
+                val nuevoCliente = Usuario(nombre = "Cliente Kotlin Puro", email = "puro@kotlin.com")
+
+                // 2. Llamar a la API
+                // Fíjate: Ya no es .getApiService(), ahora accedemos directo a la propiedad .apiService
+                val llamada = RetrofitClient.apiService.guardarUsuario(nuevoCliente)
+
+                // 3. Ejecutar
+                llamada.enqueue(object : Callback<Usuario?> {
+                    override fun onResponse(call: Call<Usuario?>, response: Response<Usuario?>) {
+                        if (response.isSuccessful) {
+                            val usuarioGuardado = response.body()
+                            // El ?.id maneja el nulo automáticamente
+                            Toast.makeText(applicationContext,
+                                "¡ÉXITO! Guardado ID: ${usuarioGuardado?.id}",
+                                Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(applicationContext, "Error: ${response.code()}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Usuario?>, t: Throwable) {
+                        Toast.makeText(applicationContext, "FALLO: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
+                })
             }
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
