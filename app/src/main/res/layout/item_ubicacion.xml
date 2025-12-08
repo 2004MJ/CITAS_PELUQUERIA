@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textView_nombre"
+        android:id="@+id/txtNombrePeluqueria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nombre de la Peluquería"
@@ -14,7 +14,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView_ciudad"
+        android:id="@+id/txtDireccionPeluqueria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ciudad"

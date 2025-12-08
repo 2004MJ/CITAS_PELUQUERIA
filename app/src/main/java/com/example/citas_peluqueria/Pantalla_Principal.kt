@@ -3,7 +3,7 @@ package com.example.citas_peluqueria
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.addCallback // ¡¡IMPORTANTE: Añadir este import!!
+import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -97,44 +97,19 @@ class Pantalla_Principal : AppCompatActivity(), NavigationView.OnNavigationItemS
                 binding.topAppBar.title = "Mis Reservas"
             }
             R.id.nav_contacto -> {
-                Toast.makeText(this, "Abriendo contacto...", Toast.LENGTH_SHORT).show()
-                binding.topAppBar.title = "Contáctanos"
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ContactoFragment()) // Asegúrate de que creaste ContactoFragment
+                    .addToBackStack(null)
+                    .commit()
             }
             R.id.nav_logout -> {
-                Toast.makeText(this, "Conectando (Versión Kotlin)...", Toast.LENGTH_SHORT).show()
-
-                // 1. Crear usuario (Sin "new", sintaxis limpia)
-                val nuevoCliente = Usuario(nombre = "Cliente Kotlin Puro", email = "puro@kotlin.com")
-
-                // 2. Llamar a la API
-                // Fíjate: Ya no es .getApiService(), ahora accedemos directo a la propiedad .apiService
-                val llamada = RetrofitClient.apiService.guardarUsuario(nuevoCliente)
-
-                // 3. Ejecutar
-                llamada.enqueue(object : Callback<Usuario?> {
-                    override fun onResponse(call: Call<Usuario?>, response: Response<Usuario?>) {
-                        if (response.isSuccessful) {
-                            val usuarioGuardado = response.body()
-                            // El ?.id maneja el nulo automáticamente
-                            Toast.makeText(applicationContext,
-                                "¡ÉXITO! Guardado ID: ${usuarioGuardado?.id}",
-                                Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(applicationContext, "Error: ${response.code()}", Toast.LENGTH_LONG).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<Usuario?>, t: Throwable) {
-                        Toast.makeText(applicationContext, "FALLO: ${t.message}", Toast.LENGTH_LONG).show()
-                    }
-                })
+                Toast.makeText(this, "Cerrando Sesion...", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
-
-    // EL ANTIGUO MÉTODO onBackpressed() SE HA ELIMINADO
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
