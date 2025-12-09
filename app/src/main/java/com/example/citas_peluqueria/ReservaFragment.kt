@@ -13,6 +13,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import java.util.Calendar
 
+// Imports de tus clases API (Asegúrate de que el paquete es correcto)
+import com.example.citas_peluqueria.api.Cita
+import com.example.citas_peluqueria.api.Peluqueria
+import com.example.citas_peluqueria.api.Servicio
+import com.example.citas_peluqueria.api.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 class ReservaFragment : Fragment() {
 
     // Variables para guardar lo que seleccione el usuario
@@ -23,44 +32,36 @@ class ReservaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Asegúrate de que tu archivo XML se llame 'fragment_reserva'
-        // Si le pusiste otro nombre, cámbialo aquí donde dice R.layout.xxxx
         val view = inflater.inflate(R.layout.fragment_reserva, container, false)
 
-        // 1. Configurar el Spinner (Lista desplegable de servicios)
-        // Buscamos el spinner por el ID que pusiste en tu XML
+        // 1. Configurar el Spinner
         val spinner: Spinner = view.findViewById(R.id.spinner_servicios)
-
-        // Creamos una lista de opciones
-        val opciones = listOf("Corte de Caballero", "Corte de Dama", "Tinte", "Barbería", "Manicura")
-
-        // Conectamos la lista al spinner
+        // El orden importa: Posición 0 = ID 1 en BD, Posición 1 = ID 2...
+        val opciones = listOf("Corte de Caballero", "Corte + Barba", "Tinte", "Barbería", "Manicura")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, opciones)
         spinner.adapter = adapter
 
-        // 2. Configurar el Botón de FECHA
+        // 2. Configurar Botón FECHA
         val btnFecha: Button = view.findViewById(R.id.button_fecha)
         btnFecha.setOnClickListener {
             mostrarCalendario(btnFecha)
         }
 
-        // 3. Configurar el Botón de HORA
+        // 3. Configurar Botón HORA
         val btnHora: Button = view.findViewById(R.id.button_hora)
         btnHora.setOnClickListener {
             mostrarReloj(btnHora)
         }
 
-        // 4. Configurar el Botón CONFIRMAR
+        // 4. Configurar Botón CONFIRMAR
         val btnConfirmar: Button = view.findViewById(R.id.button_confirmar_reserva)
         btnConfirmar.setOnClickListener {
-            val servicio = spinner.selectedItem.toString()
-            guardarReserva(servicio)
+            guardarReservaReal()
         }
 
         return view
     }
 
-    // Función para mostrar el calendario
     private fun mostrarCalendario(boton: Button) {
         val calendario = Calendar.getInstance()
         val year = calendario.get(Calendar.YEAR)
@@ -68,45 +69,70 @@ class ReservaFragment : Fragment() {
         val day = calendario.get(Calendar.DAY_OF_MONTH)
 
         val datePicker = DatePickerDialog(requireContext(), { _, anio, mes, dia ->
-            // El mes empieza en 0, así que le sumamos 1
-            val fecha = "$dia/${mes + 1}/$anio"
-            fechaSeleccionada = fecha
-            boton.text = "Fecha: $fecha" // Cambiamos el texto del botón
+            // IMPORTANTE: Formato YYYY-MM-DD para Spring Boot
+            val fechaFormateada = String.format("%04d-%02d-%02d", anio, mes + 1, dia)
+            fechaSeleccionada = fechaFormateada
+            boton.text = "Fecha: $fechaFormateada"
         }, year, month, day)
 
         datePicker.show()
     }
 
-    // Función para mostrar el reloj
     private fun mostrarReloj(boton: Button) {
         val calendario = Calendar.getInstance()
         val hora = calendario.get(Calendar.HOUR_OF_DAY)
         val minutos = calendario.get(Calendar.MINUTE)
 
         val timePicker = TimePickerDialog(requireContext(), { _, h, m ->
-            // Formateamos para que salga 09:05 en vez de 9:5
+            // Formato HH:mm
             val horaFormateada = String.format("%02d:%02d", h, m)
             horaSeleccionada = horaFormateada
-            boton.text = "Hora: $horaFormateada" // Cambiamos el texto del botón
+            boton.text = "Hora: $horaFormateada"
         }, hora, minutos, true)
 
         timePicker.show()
     }
 
-    // Función para simular el guardado
-    private fun guardarReserva(servicio: String) {
+    // --- FUNCIÓN DE CONEXIÓN REAL ---
+    private fun guardarReservaReal() {
         if (fechaSeleccionada.isEmpty() || horaSeleccionada.isEmpty()) {
             Toast.makeText(context, "Por favor elige fecha y hora", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Simulación de éxito
-        Toast.makeText(context, "¡Reserva Confirmada! $servicio el $fechaSeleccionada", Toast.LENGTH_LONG).show()
+        val spinner: Spinner = requireView().findViewById(R.id.spinner_servicios)
+        // Calculamos ID: Posición 0 -> ID 1
+        val servicioId = (spinner.selectedItemPosition + 1).toLong()
 
-        // Volvemos a la pantalla de "Mis Reservas"
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, MisReservasFragment())
-            .addToBackStack(null)
-            .commit()
+        // Creamos la cita con el usuario fijo "usuario_app"
+        // Este mismo usuario es el que luego lee MisReservasFragment
+        val nuevaCita = Cita(
+            clienteUid = "usuario_app",
+            fecha = fechaSeleccionada,
+            hora = horaSeleccionada,
+            peluqueria = Peluqueria(1), // Gracias al valor por defecto en Peluqueria.kt, esto funciona solo con ID
+            servicio = Servicio(servicioId)
+        )
+
+        // Enviar a Spring Boot
+        RetrofitClient.getApi().crearCita(nuevaCita).enqueue(object : Callback<Cita> {
+            override fun onResponse(call: Call<Cita>, response: Response<Cita>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "¡Reserva guardada con éxito!", Toast.LENGTH_LONG).show()
+
+                    // AL TERMINAR: Nos vamos a la pantalla de "Mis Reservas" para verla
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, MisReservasFragment())
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    Toast.makeText(context, "Error servidor: ${response.code()}", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Cita>, t: Throwable) {
+                Toast.makeText(context, "Fallo conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }

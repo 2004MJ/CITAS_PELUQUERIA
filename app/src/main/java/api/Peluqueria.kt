@@ -1,7 +1,10 @@
-package com.example.citas_peluqueria.api // O tu paquete correspondiente
+package com.example.citas_peluqueria.api
 
 data class Peluqueria(
     val id: Long,
-    val nombre: String,
-    val direccion: String
+    // El truco: Ponemos un valor por defecto (= "")
+    // Así, si no se lo pasamos (como en la reserva), Kotlin no se queja.
+    val nombre: String = "",
+    val direccion: String = "",
+    val telefono: String = ""
 )

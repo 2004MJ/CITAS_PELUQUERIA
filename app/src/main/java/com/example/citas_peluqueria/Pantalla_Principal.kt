@@ -54,8 +54,12 @@ class Pantalla_Principal : AppCompatActivity(), NavigationView.OnNavigationItemS
                     binding.topAppBar.title = "Inicio"
                 }
                 R.id.nav_reservas -> {
+                    // 1. Cargamos el fragmento de la LISTA (MisReservasFragment), no el del formulario
                     replaceFragment(ReservaFragment())
+
+                    // 2. Cambiamos el título
                     binding.topAppBar.title = "Mis Reservas"
+
                 }
                 R.id.nav_mapa -> {
                     replaceFragment(MapaFragment())
@@ -93,7 +97,7 @@ class Pantalla_Principal : AppCompatActivity(), NavigationView.OnNavigationItemS
                 binding.topAppBar.title = "Inicio"
             }
             R.id.nav_reservas -> {
-                replaceFragment(ReservaFragment())
+                replaceFragment(MisReservasFragment())
                 binding.topAppBar.title = "Mis Reservas"
             }
             R.id.nav_contacto -> {
