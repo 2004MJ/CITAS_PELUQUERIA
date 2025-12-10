@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import java.util.Calendar
 
-// Imports de tus clases API (Asegúrate de que el paquete es correcto)
+// Imports de tus clases API
 import com.example.citas_peluqueria.api.Cita
 import com.example.citas_peluqueria.api.Peluqueria
 import com.example.citas_peluqueria.api.Servicio
@@ -24,9 +24,17 @@ import retrofit2.Response
 
 class ReservaFragment : Fragment() {
 
-    // Variables para guardar lo que seleccione el usuario
     private var fechaSeleccionada = ""
     private var horaSeleccionada = ""
+
+    // Listas para guardar los datos REALES
+    private var listaPeluqueriasReal: List<Peluqueria> = emptyList()
+    private var listaServiciosReal: List<Servicio> = emptyList()
+
+    private lateinit var spinnerPeluquerias: Spinner
+    private lateinit var spinnerServicios: Spinner
+    private lateinit var btnFecha: Button
+    private lateinit var btnHora: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,93 +42,124 @@ class ReservaFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_reserva, container, false)
 
-        // 1. Configurar el Spinner
-        val spinner: Spinner = view.findViewById(R.id.spinner_servicios)
-        // El orden importa: Posición 0 = ID 1 en BD, Posición 1 = ID 2...
-        val opciones = listOf("Corte de Caballero", "Corte + Barba", "Tinte", "Barbería", "Manicura")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, opciones)
-        spinner.adapter = adapter
-
-        // 2. Configurar Botón FECHA
-        val btnFecha: Button = view.findViewById(R.id.button_fecha)
-        btnFecha.setOnClickListener {
-            mostrarCalendario(btnFecha)
-        }
-
-        // 3. Configurar Botón HORA
-        val btnHora: Button = view.findViewById(R.id.button_hora)
-        btnHora.setOnClickListener {
-            mostrarReloj(btnHora)
-        }
-
-        // 4. Configurar Botón CONFIRMAR
+        spinnerPeluquerias = view.findViewById(R.id.spinner_peluquerias)
+        spinnerServicios = view.findViewById(R.id.spinner_servicios)
+        btnFecha = view.findViewById(R.id.button_fecha)
+        btnHora = view.findViewById(R.id.button_hora)
         val btnConfirmar: Button = view.findViewById(R.id.button_confirmar_reserva)
-        btnConfirmar.setOnClickListener {
-            guardarReservaReal()
-        }
+
+        // Cargar datos
+        cargarPeluqueriasApi()
+        cargarServiciosApi()
+
+        // Configurar botones
+        btnFecha.setOnClickListener { mostrarCalendario() }
+        btnHora.setOnClickListener { mostrarReloj() }
+        btnConfirmar.setOnClickListener { guardarReservaReal() }
 
         return view
     }
 
-    private fun mostrarCalendario(boton: Button) {
+    // --- CARGAR PELUQUERÍAS ---
+    private fun cargarPeluqueriasApi() {
+        RetrofitClient.getApi().obtenerPeluquerias().enqueue(object : Callback<List<Peluqueria>> {
+            override fun onResponse(call: Call<List<Peluqueria>>, response: Response<List<Peluqueria>>) {
+                if (response.isSuccessful) {
+                    listaPeluqueriasReal = response.body() ?: emptyList()
+                    val nombres = listaPeluqueriasReal.map { it.nombre }
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
+                    spinnerPeluquerias.adapter = adapter
+                }
+            }
+            override fun onFailure(call: Call<List<Peluqueria>>, t: Throwable) {
+                Toast.makeText(context, "Error cargando peluquerías", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // --- CARGAR SERVICIOS (AQUÍ ESTABA EL ERROR, YA CORREGIDO) ---
+    private fun cargarServiciosApi() {
+        // Fíjate que ahora el paréntesis de cierre ')' está al final del bloque, no después de <List<Servicio>>
+        RetrofitClient.getApi().obtenerServicios().enqueue(object : Callback<List<Servicio>> {
+            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
+                if (response.isSuccessful) {
+                    listaServiciosReal = response.body() ?: emptyList()
+                    val nombres = listaServiciosReal.map { "${it.nombre} (${it.precio}€)" }
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
+                    spinnerServicios.adapter = adapter
+                }
+            }
+            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
+                Toast.makeText(context, "Error cargando servicios", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun mostrarCalendario() {
         val calendario = Calendar.getInstance()
-        val year = calendario.get(Calendar.YEAR)
-        val month = calendario.get(Calendar.MONTH)
-        val day = calendario.get(Calendar.DAY_OF_MONTH)
-
         val datePicker = DatePickerDialog(requireContext(), { _, anio, mes, dia ->
-            // IMPORTANTE: Formato YYYY-MM-DD para Spring Boot
-            val fechaFormateada = String.format("%04d-%02d-%02d", anio, mes + 1, dia)
-            fechaSeleccionada = fechaFormateada
-            boton.text = "Fecha: $fechaFormateada"
-        }, year, month, day)
+            val checkCalendar = Calendar.getInstance()
+            checkCalendar.set(anio, mes, dia)
+            val diaSemana = checkCalendar.get(Calendar.DAY_OF_WEEK)
 
+            if (diaSemana == Calendar.SUNDAY) {
+                Toast.makeText(context, "🚫 Los domingos estamos cerrados", Toast.LENGTH_LONG).show()
+                fechaSeleccionada = ""
+                btnFecha.text = "Seleccionar Fecha"
+            } else {
+                val fechaFormateada = String.format("%04d-%02d-%02d", anio, mes + 1, dia)
+                fechaSeleccionada = fechaFormateada
+                btnFecha.text = "Fecha: $fechaFormateada"
+            }
+        }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH))
+
+        datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
         datePicker.show()
     }
 
-    private fun mostrarReloj(boton: Button) {
+    private fun mostrarReloj() {
         val calendario = Calendar.getInstance()
-        val hora = calendario.get(Calendar.HOUR_OF_DAY)
-        val minutos = calendario.get(Calendar.MINUTE)
-
         val timePicker = TimePickerDialog(requireContext(), { _, h, m ->
-            // Formato HH:mm
-            val horaFormateada = String.format("%02d:%02d", h, m)
-            horaSeleccionada = horaFormateada
-            boton.text = "Hora: $horaFormateada"
-        }, hora, minutos, true)
+            if (h < 8 || h >= 21) {
+                Toast.makeText(context, "🚫 Horario de atención: 08:00 a 21:00", Toast.LENGTH_LONG).show()
+                horaSeleccionada = ""
+                btnHora.text = "Seleccionar Hora"
+            } else {
+                val horaFormateada = String.format("%02d:%02d", h, m)
+                horaSeleccionada = horaFormateada
+                btnHora.text = "Hora: $horaFormateada"
+            }
+        }, calendario.get(Calendar.HOUR_OF_DAY), 0, true)
 
         timePicker.show()
     }
 
-    // --- FUNCIÓN DE CONEXIÓN REAL ---
     private fun guardarReservaReal() {
         if (fechaSeleccionada.isEmpty() || horaSeleccionada.isEmpty()) {
             Toast.makeText(context, "Por favor elige fecha y hora", Toast.LENGTH_SHORT).show()
             return
         }
+        if (listaPeluqueriasReal.isEmpty() || listaServiciosReal.isEmpty()) {
+            Toast.makeText(context, "Cargando datos... intenta de nuevo", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        val spinner: Spinner = requireView().findViewById(R.id.spinner_servicios)
-        // Calculamos ID: Posición 0 -> ID 1
-        val servicioId = (spinner.selectedItemPosition + 1).toLong()
+        // Recuperamos los objetos reales
+        val peluqueriaElegida = listaPeluqueriasReal[spinnerPeluquerias.selectedItemPosition]
+        val servicioElegido = listaServiciosReal[spinnerServicios.selectedItemPosition]
 
-        // Creamos la cita con el usuario fijo "usuario_app"
-        // Este mismo usuario es el que luego lee MisReservasFragment
         val nuevaCita = Cita(
             clienteUid = "usuario_app",
             fecha = fechaSeleccionada,
             hora = horaSeleccionada,
-            peluqueria = Peluqueria(1), // Gracias al valor por defecto en Peluqueria.kt, esto funciona solo con ID
-            servicio = Servicio(servicioId)
+            peluqueria = peluqueriaElegida,
+            servicio = servicioElegido
         )
 
-        // Enviar a Spring Boot
         RetrofitClient.getApi().crearCita(nuevaCita).enqueue(object : Callback<Cita> {
             override fun onResponse(call: Call<Cita>, response: Response<Cita>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(context, "¡Reserva guardada con éxito!", Toast.LENGTH_LONG).show()
-
-                    // AL TERMINAR: Nos vamos a la pantalla de "Mis Reservas" para verla
+                    Toast.makeText(context, "¡Reserva Confirmada!", Toast.LENGTH_LONG).show()
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, MisReservasFragment())
                         .addToBackStack(null)

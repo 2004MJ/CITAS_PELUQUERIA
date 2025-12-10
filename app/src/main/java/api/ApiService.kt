@@ -23,6 +23,8 @@ interface ApiService {
     fun obtenerCitasUsuario(@Path("uid") uid: String): Call<List<Cita>>
     // --- AÑADE ESTO PARA QUE FUNCIONE EL BOTÓN CANCELAR ---
 
+    @GET("/api/servicios")
+    fun obtenerServicios(): Call<List<Servicio>>
     @DELETE("/api/citas/{id}")
     fun eliminarCita(@Path("id") id: Long): Call<Void>
 }

@@ -7,7 +7,6 @@
     android:background="#F5F5F5"
     tools:context=".ReservaFragment">
 
-    <!-- Título de la pantalla -->
     <TextView
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
@@ -21,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Tarjeta que agrupa los campos de la reserva -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_reserva"
         android:layout_width="0dp"
@@ -39,7 +37,23 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Sección Servicio -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecciona Peluquería"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_peluquerias"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/spinner_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,7 +70,6 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
-            <!-- Sección Fecha -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +89,6 @@
                 app:icon="@drawable/ic_calendar"
                 app:iconTint="@color/black" />
 
-            <!-- Sección Hora -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,7 +110,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Botón para confirmar la reserva -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_confirmar_reserva"
         android:layout_width="0dp"
@@ -112,4 +123,3 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
