@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 
 import com.example.citas_peluqueria.api.*
+import com.example.citas_peluqueria.utils.CacheManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,8 +32,10 @@ class ReservaFragment : Fragment() {
     private lateinit var btnConfirmar: Button
     private lateinit var tvTituloHoras: TextView
 
+    // Cache Manager
+    private lateinit var cacheManager: CacheManager
+
     // GENERAMOS LAS HORAS (De 08:00 a 20:00)
-    // Esto crea una lista automática: ["08:00", "09:00", ... "20:00"]
     private val todasLasHoras = (8..20).map { String.format("%02d:00", it) }
 
     override fun onCreateView(
@@ -41,7 +44,10 @@ class ReservaFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_reserva, container, false)
 
-        // 1. Vincular vistas del XML Nuevo
+        // Inicializamos CacheManager
+        cacheManager = CacheManager(requireContext())
+
+        // 1. Vincular vistas
         spinnerPeluquerias = view.findViewById(R.id.spinner_peluquerias)
         spinnerServicios = view.findViewById(R.id.spinner_servicios)
         calendarView = view.findViewById(R.id.calendarView)
@@ -49,14 +55,14 @@ class ReservaFragment : Fragment() {
         btnConfirmar = view.findViewById(R.id.button_confirmar_reserva)
         tvTituloHoras = view.findViewById(R.id.tvSeleccionaHora)
 
-        // 2. Configurar la rejilla de horas (4 columnas)
+        // 2. Configurar la rejilla de horas
         recyclerHoras.layoutManager = GridLayoutManager(context, 4)
 
-        // 3. Cargar Spinners
-        cargarPeluqueriasApi()
-        cargarServiciosApi()
+        // 3. Cargar Spinners (CON CACHÉ)
+        cargarPeluquerias()
+        cargarServicios()
 
-        // 4. Lógica del Calendario Grande
+        // 4. Lógica del Calendario
         configurarCalendario()
 
         // 5. Botón Confirmar
@@ -65,63 +71,114 @@ class ReservaFragment : Fragment() {
         return view
     }
 
-    private fun configurarCalendario() {
-        // Bloquear fechas pasadas
-        calendarView.minDate = System.currentTimeMillis() - 1000
+    // ----------------------------------------------------------------
+    // LÓGICA DE CACHÉ + RED (PELUQUERÍAS)
+    // ----------------------------------------------------------------
+    private fun cargarPeluquerias() {
+        val peluqueriasCache = cacheManager.obtenerPeluquerias()
+        if (!peluqueriasCache.isNullOrEmpty()) {
+            listaPeluqueriasReal = peluqueriasCache
+            actualizarSpinnerPeluquerias()
+        }
 
+        RetrofitClient.getApi().obtenerPeluquerias().enqueue(object : Callback<List<Peluqueria>> {
+            override fun onResponse(call: Call<List<Peluqueria>>, response: Response<List<Peluqueria>>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val listaFresca = response.body()!!
+                    listaPeluqueriasReal = listaFresca
+                    actualizarSpinnerPeluquerias()
+                    cacheManager.guardarPeluquerias(listaFresca)
+                }
+            }
+            override fun onFailure(call: Call<List<Peluqueria>>, t: Throwable) {
+                if (listaPeluqueriasReal.isEmpty()) {
+                    Toast.makeText(context, "Error cargando peluquerías", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
+    private fun actualizarSpinnerPeluquerias() {
+        if (context == null) return
+        val nombres = listaPeluqueriasReal.map { it.nombre }
+        spinnerPeluquerias.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
+    }
+
+    // ----------------------------------------------------------------
+    // LÓGICA DE CACHÉ + RED (SERVICIOS)
+    // ----------------------------------------------------------------
+    private fun cargarServicios() {
+        val serviciosCache = cacheManager.obtenerServicios()
+        if (!serviciosCache.isNullOrEmpty()) {
+            listaServiciosReal = serviciosCache
+            actualizarSpinnerServicios()
+        }
+
+        RetrofitClient.getApi().obtenerServicios().enqueue(object : Callback<List<Servicio>> {
+            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val listaFresca = response.body()!!
+                    listaServiciosReal = listaFresca
+                    actualizarSpinnerServicios()
+                    cacheManager.guardarServicios(listaFresca)
+                }
+            }
+            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
+                if (listaServiciosReal.isEmpty()) {
+                    Toast.makeText(context, "Error cargando servicios", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
+    private fun actualizarSpinnerServicios() {
+        if (context == null) return
+        val nombres = listaServiciosReal.map { "${it.nombre} (${it.precio}€)" }
+        spinnerServicios.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
+    }
+
+    // ----------------------------------------------------------------
+    // LÓGICA DE CALENDARIO
+    // ----------------------------------------------------------------
+    private fun configurarCalendario() {
+        calendarView.minDate = System.currentTimeMillis() - 1000
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            // A. Verificamos si es Domingo
             val calendar = Calendar.getInstance()
             calendar.set(year, month, dayOfMonth)
             val diaSemana = calendar.get(Calendar.DAY_OF_WEEK)
 
             if (diaSemana == Calendar.SUNDAY) {
                 Toast.makeText(context, "🚫 Domingos cerrado", Toast.LENGTH_SHORT).show()
-                ocultarHoras() // Ocultamos la rejilla
+                ocultarHoras()
                 return@setOnDateChangeListener
             }
 
-            // B. Guardamos la fecha (Formato SQL: YYYY-MM-DD)
             fechaSeleccionada = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
-
-            // C. Pedimos al servidor las horas ocupadas de ese día
             cargarHorasDisponibles(fechaSeleccionada)
         }
     }
 
     private fun cargarHorasDisponibles(fecha: String) {
-        // Obtenemos el ID de la peluquería seleccionada (o 1 por defecto)
         val peluqueriaId = if (listaPeluqueriasReal.isNotEmpty()) {
             listaPeluqueriasReal[spinnerPeluquerias.selectedItemPosition].id
-        } else {
-            1L
-        }
+        } else { 1L }
 
-        // Mostramos mensaje de carga
-        tvTituloHoras.text = "Consultando disponibilidad..."
+        tvTituloHoras.text = "Consultando..."
         tvTituloHoras.visibility = View.VISIBLE
         recyclerHoras.visibility = View.GONE
         btnConfirmar.isEnabled = false
 
-        // Llamada al Backend (Eclipse)
         RetrofitClient.getApi().obtenerHorasOcupadas(fecha, peluqueriaId).enqueue(object : Callback<List<String>> {
             override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
                 if (response.isSuccessful) {
                     val horasOcupadas = response.body() ?: emptyList()
-
-                    // ¡ÉXITO! Mostramos la rejilla
-                    tvTituloHoras.text = "3. Elige una Hora Disponible ($fecha)"
+                    tvTituloHoras.text = "3. Elige una Hora ($fecha)"
                     recyclerHoras.visibility = View.VISIBLE
-
-                    // Configuramos el adaptador (HorasAdapter)
                     recyclerHoras.adapter = HorasAdapter(todasLasHoras, horasOcupadas) { horaClick ->
-                        // Al hacer click en una hora libre:
                         horaSeleccionada = horaClick
                         btnConfirmar.isEnabled = true
                         btnConfirmar.text = "CONFIRMAR ($fecha - $horaClick)"
                     }
-                } else {
-                    tvTituloHoras.text = "Error al consultar horario"
                 }
             }
             override fun onFailure(call: Call<List<String>>, t: Throwable) {
@@ -137,37 +194,9 @@ class ReservaFragment : Fragment() {
         fechaSeleccionada = ""
     }
 
-    // --- MÉTODOS DE CARGA DE SPINNERS ---
-    private fun cargarPeluqueriasApi() {
-        RetrofitClient.getApi().obtenerPeluquerias().enqueue(object : Callback<List<Peluqueria>> {
-            override fun onResponse(call: Call<List<Peluqueria>>, response: Response<List<Peluqueria>>) {
-                if (response.isSuccessful) {
-                    listaPeluqueriasReal = response.body() ?: emptyList()
-                    val nombres = listaPeluqueriasReal.map { it.nombre }
-                    spinnerPeluquerias.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
-                }
-            }
-            override fun onFailure(call: Call<List<Peluqueria>>, t: Throwable) {
-                Toast.makeText(context, "Error cargando peluquerías", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun cargarServiciosApi() {
-        RetrofitClient.getApi().obtenerServicios().enqueue(object : Callback<List<Servicio>> {
-            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
-                if (response.isSuccessful) {
-                    listaServiciosReal = response.body() ?: emptyList()
-                    val nombres = listaServiciosReal.map { "${it.nombre} (${it.precio}€)" }
-                    spinnerServicios.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, nombres)
-                }
-            }
-            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
-                Toast.makeText(context, "Error cargando servicios", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
+    // ----------------------------------------------------------------
+    // NUEVA LÓGICA: GUARDAR RESERVA Y ACTUALIZAR CACHÉ DE CITAS
+    // ----------------------------------------------------------------
     private fun guardarReservaReal() {
         if (fechaSeleccionada.isEmpty() || horaSeleccionada.isEmpty()) return
 
@@ -185,15 +214,34 @@ class ReservaFragment : Fragment() {
         RetrofitClient.getApi().crearCita(cita).enqueue(object : Callback<Cita> {
             override fun onResponse(call: Call<Cita>, response: Response<Cita>) {
                 if (response.isSuccessful) {
+                    val nuevaCita = response.body()
+
+                    // --- AQUÍ ESTÁ LA MAGIA DE LA CACHÉ ---
+                    if (nuevaCita != null) {
+                        // 1. Obtenemos la lista que ya teníamos guardada (o creamos una vacía)
+                        val listaActual = cacheManager.obtenerMisReservas()?.toMutableList() ?: mutableListOf()
+
+                        // 2. Añadimos la nueva cita
+                        listaActual.add(nuevaCita)
+
+                        // 3. Guardamos la lista actualizada en el móvil
+                        cacheManager.guardarMisReservas(listaActual)
+                    }
+                    // --------------------------------------
+
                     Toast.makeText(context, "¡Reserva Confirmada!", Toast.LENGTH_LONG).show()
+
+                    // Al ir a MisReservasFragment, la cita ya estará ahí gracias al paso anterior
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, MisReservasFragment())
                         .addToBackStack(null)
                         .commit()
+
                 } else {
                     Toast.makeText(context, "Error servidor: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
+
             override fun onFailure(call: Call<Cita>, t: Throwable) {
                 Toast.makeText(context, "Fallo conexión", Toast.LENGTH_LONG).show()
             }

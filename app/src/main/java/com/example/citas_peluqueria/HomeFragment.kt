@@ -150,7 +150,7 @@ class HomeFragment : Fragment(), SensorEventListener {
                 val acceleration = sqrt((x * x + y * y + z * z).toDouble()) - SensorManager.GRAVITY_EARTH
 
                 // He subido un poco la sensibilidad a 8 (5 es muy sensible, a veces salta solo)
-                if (acceleration > 8) {
+                if (acceleration > 2) {
                     if (curTime - lastShakeTime > 1500) { // Esperar 1.5 seg entre sacudidas
                         lastShakeTime = curTime
 
