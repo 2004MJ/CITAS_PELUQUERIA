@@ -5,35 +5,42 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="@color/bg_dark"
     tools:context=".Login">
 
-  <!-- Contenedor principal con padding -->
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:gravity="center_horizontal"
       android:orientation="vertical"
-      android:padding="24dp"
+      android:padding="32dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Título de la App: PELATE -->
     <TextView
         android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed-light"
-        android:letterSpacing="0.1"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:letterSpacing="0.15"
         android:text="PELATE"
-        android:textColor="#FFFFFF"
-        android:textSize="56sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="48dp" />
+        android:textColor="@color/gold_primary"
+        android:textSize="48sp"
+        android:textStyle="bold" />
 
-    <!-- Campo de texto para el Email -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Estilo y Clase"
+        android:textColor="@color/text_grey"
+        android:textSize="14sp"
+        android:letterSpacing="0.2"
+        android:textAllCaps="true"/>
+
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
@@ -43,10 +50,9 @@
         android:hint="Correo Electrónico"
         android:inputType="textEmailAddress"
         android:padding="16dp"
-        android:textColor="#FF000000"
-        android:textColorHint="#A0A0A0" />
+        android:textColor="@color/black"
+        android:textColorHint="@color/text_grey" />
 
-    <!-- Campo de texto para la Contraseña -->
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
@@ -55,23 +61,21 @@
         android:hint="Contraseña"
         android:inputType="textPassword"
         android:padding="16dp"
-        android:textColor="#FF000000"
-        android:textColorHint="#A0A0A0" />
+        android:textColor="@color/black"
+        android:textColorHint="@color/text_grey" />
 
-    <!-- Botón de Login -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#BB86FC"
-        android:padding="16dp"
-        android:text="Entrar"
-        android:textColor="#121212"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:backgroundTint="@color/gold_primary"
+        android:text="ENTRAR"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="8dp"/>
 
-    <!-- Divisor "O" -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,7 +88,7 @@
           android:layout_width="0dp"
           android:layout_height="1dp"
           android:layout_weight="1"
-          android:background="#404040" />
+          android:background="#333333" />
 
       <TextView
           android:layout_width="wrap_content"
@@ -92,17 +96,16 @@
           android:paddingStart="16dp"
           android:paddingEnd="16dp"
           android:text="O"
-          android:textColor="#A0A0A0"
-          android:textSize="16sp" />
+          android:textColor="@color/text_grey"
+          android:textSize="14sp" />
 
       <View
           android:layout_width="0dp"
           android:layout_height="1dp"
           android:layout_weight="1"
-          android:background="#404040" />
+          android:background="#333333" />
     </LinearLayout>
 
-    <!-- Botones de Redes Sociales -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,35 +114,36 @@
 
       <ImageButton
           android:id="@+id/googleLoginButton"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
           android:layout_marginEnd="16dp"
-          android:background="?attr/selectableItemBackgroundBorderless"
+          android:background="@drawable/edit_text_background"
           android:src="@drawable/ic_google"
-          android:scaleType="fitCenter"
-          android:contentDescription="Iniciar sesión con Google" />
+          android:scaleType="centerInside"
+          android:padding="12dp"
+          android:contentDescription="Google" />
 
       <ImageButton
           android:id="@+id/facebookLoginButton"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
           android:layout_marginStart="16dp"
-          android:background="?attr/selectableItemBackgroundBorderless"
+          android:background="@drawable/edit_text_background"
           android:src="@drawable/ic_facebook"
-          android:scaleType="fitCenter"
-          android:contentDescription="Iniciar sesión con Facebook" />
+          android:scaleType="centerInside"
+          android:padding="12dp"
+          android:contentDescription="Facebook" />
 
     </LinearLayout>
 
   </LinearLayout>
 
-  <!-- Enlace para Registrarse -->
   <LinearLayout
       android:id="@+id/registerLayout"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-      android:padding="16dp"
+      android:padding="24dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent">
@@ -148,16 +152,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="¿Aún no tienes cuenta? "
-        android:textColor="#A0A0A0"
-        android:textSize="16sp" />
+        android:textColor="@color/text_grey"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Regístrate aquí"
-        android:textColor="#BB86FC"
-        android:textSize="16sp"
+        android:textColor="@color/gold_primary"
+        android:textSize="14sp"
         android:textStyle="bold" />
   </LinearLayout>
 

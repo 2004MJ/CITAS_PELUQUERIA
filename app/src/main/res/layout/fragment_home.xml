@@ -1,171 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp">
+        android:paddingBottom="40dp">
 
         <View
-            android:id="@+id/headerBackground"
+            android:id="@+id/header_bg"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:background="#6200EE"
-            app:layout_constraintTop_toTopOf="parent"/>
-
+            android:layout_height="200dp"
+            android:background="@drawable/shadow_top"
+            android:backgroundTint="#252525"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
-            android:id="@+id/tvSaludo"
+            android:id="@+id/tv_saludo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¡Hola de nuevo!"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="40dp"
+            android:text="💈 BIENVENIDO"
+            android:letterSpacing="0.1"
+            android:textColor="@color/gold_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvTitulo"
+            android:id="@+id/tv_pregunta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:text="Define tu estilo.\nReserva tu turno hoy."
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_saludo"
+            app:layout_constraintTop_toBottomOf="@id/tv_saludo" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPedirCita"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="@color/gold_primary"
+            android:text="CORTARME EL PELO AHORA"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_saludo"
+            app:layout_constraintTop_toBottomOf="@id/tv_pregunta" />
+
+        <TextView
+            android:id="@+id/tv_shake_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¿Qué estilo buscas hoy?"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="@id/tvSaludo"
-            app:layout_constraintTop_toBottomOf="@id/tvSaludo"/>
+            android:layout_marginTop="12dp"
+            android:text="📱 Agita tu móvil para reservar rápido"
+            android:textColor="@color/text_grey"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="@id/btnPedirCita"
+            app:layout_constraintStart_toStartOf="@id/btnPedirCita"
+            app:layout_constraintTop_toBottomOf="@id/btnPedirCita" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardSearch"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProximaCita"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp"
-            app:layout_constraintTop_toBottomOf="@id/tvTitulo">
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/card_dark"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="6dp"
+            app:strokeColor="#333333"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_shake_hint">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="#888888"/>
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Buscar peluquería, servicio..."
-                    android:textColor="#888888"
-                    android:layout_marginStart="12dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📅"
+                        android:textSize="18sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  TU PRÓXIMA CITA"
+                        android:textColor="@color/gold_primary"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="#333333"/>
+
+                <TextView
+                    android:id="@+id/tvDetalleCitaHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cargando..."
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
-            android:id="@+id/tvCatTitle"
+            android:id="@+id/tv_categorias"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Categorías"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#333333"
             android:layout_marginTop="32dp"
-            android:layout_marginStart="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardSearch"/>
+            android:text="NUESTROS SERVICIOS"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tv_saludo"
+            app:layout_constraintTop_toBottomOf="@id/cardProximaCita" />
 
         <HorizontalScrollView
-            android:id="@+id/scrollCategorias"
+            android:id="@+id/scroll_categorias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_marginTop="12dp"
-            android:paddingStart="24dp"
+            android:layout_marginTop="16dp"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tvCatTitle">
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@id/tv_categorias">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✂️ Corte"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    android:text="Corte Caballero"
+                    android:textColor="@color/white"
+                    app:chipBackgroundColor="@color/card_dark"
+                    app:chipStrokeColor="@color/text_grey"
+                    app:chipStrokeWidth="1dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💈 Barbería"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    android:text="Barba &amp; Afeitado"
+                    android:textColor="@color/white"
+                    app:chipBackgroundColor="@color/card_dark"
+                    app:chipStrokeColor="@color/text_grey"
+                    app:chipStrokeWidth="1dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🎨 Tinte"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    android:text="Degradado Fade"
+                    android:textColor="@color/white"
+                    app:chipBackgroundColor="@color/card_dark"
+                    app:chipStrokeColor="@color/text_grey"
+                    app:chipStrokeWidth="1dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💆 Spa"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    android:text="Tinte Color"
+                    android:textColor="@color/white"
+                    app:chipBackgroundColor="@color/card_dark"
+                    app:chipStrokeColor="@color/text_grey"
+                    app:chipStrokeWidth="1dp"/>
             </LinearLayout>
         </HorizontalScrollView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_reservar_ahora"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="24dp"
-            android:padding="14dp"
-            android:text="📅 RESERVA RÁPIDA"
-            android:textStyle="bold"
-            app:cornerRadius="12dp"
-            android:backgroundTint="#000000"
-            app:layout_constraintTop_toBottomOf="@id/scrollCategorias"/>
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/card_dark"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/scroll_categorias">
 
-        <TextView
-            android:id="@+id/tvPopulares"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Más Populares"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#333333"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_reservar_ahora"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerPeluquerias"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintTop_toBottomOf="@id/tvPopulares"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LA EXPERIENCIA"
+                    android:textColor="@color/gold_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="6dp"
+                    android:text="Disfruta de un ambiente relajado, música clásica y el mejor servicio de la ciudad. \n\n📍 Calle Principal 123"
+                    android:textColor="@color/text_grey"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

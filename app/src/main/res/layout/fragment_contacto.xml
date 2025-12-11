@@ -1,33 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="#F5F5F5">
+    android:background="@color/bg_dark"
+    android:padding="24dp">
+
+    <View
+        android:id="@+id/top_deco"
+        android:layout_width="60dp"
+        android:layout_height="4dp"
+        android:background="@color/gold_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/tvTituloContacto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Estamos aquí para ayudarte"
+        android:layout_marginTop="24dp"
+        android:text="ESTAMOS AQUÍ PARA TI"
+        android:textColor="@color/gold_primary"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#333333"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:letterSpacing="0.1"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="30dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_deco" />
 
-    <androidx.cardview.widget.CardView
+    <TextView
+        android:id="@+id/tvSubtitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Contáctanos o visítanos"
+        android:textColor="@color/text_grey"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloContacto" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardContacto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:cardBackgroundColor="@color/card_dark"
         app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTituloContacto">
+        app:cardElevation="8dp"
+        app:strokeColor="@color/gold_primary"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitulo">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,51 +61,161 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Teléfono"
-                android:textColor="#666666"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+34 600 123 456"
-                android:textSize="18sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Correo Electrónico"
-                android:textColor="#666666"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="contacto@peluqueria.com"
-                android:textSize="18sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_contact"
+                    app:tint="@color/gold_primary" />
 
-            <TextView
-                android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TELÉFONO"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+34 600 123 456"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#333333" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sucursal Principal"
-                android:textColor="#666666"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_email"
+                    app:tint="@color/gold_primary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CORREO ELECTRÓNICO"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="contacto@peluqueria.com"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#333333" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calle Mayor, 56, Murcia"
-                android:textSize="18sp"
-                android:textColor="#000000"
-                android:textStyle="bold"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/gold_primary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SUCURSAL PRINCIPAL"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Calle Mayor, 56, Murcia"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tvSocial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SÍGUENOS"
+        android:textColor="@color/gold_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2"
+        app:layout_constraintBottom_toTopOf="@+id/linearSocial"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="12dp"/>
+
+    <LinearLayout
+        android:id="@+id/linearSocial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_facebook"
+            app:tint="@color/white"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

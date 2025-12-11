@@ -22,6 +22,7 @@ android {
         viewBinding = true
     }
 
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -37,6 +38,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+
     }
 }
 
@@ -51,6 +53,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

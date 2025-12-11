@@ -6,19 +6,19 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.citas_peluqueria.api.Cita // Usamos la clase que ya tienes creada
+import com.example.citas_peluqueria.api.Cita
 
 class ReservasAdapter(
-    private val listaCitas: MutableList<Cita>, // Cambiamos 'Reserva' por 'Cita'
-    private val onCancelarClick: (Cita) -> Unit // Función para cuando pulses cancelar
+    private val listaCitas: MutableList<Cita>,
+    private val onCancelarClick: (Cita) -> Unit
 ) : RecyclerView.Adapter<ReservasAdapter.ReservaViewHolder>() {
 
+    // ViewHolder clásico: Buscamos las vistas por su ID manualmente
     class ReservaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // Asegúrate de que estos IDs coinciden con tu item_reserva.xml
-        val servicio: TextView = view.findViewById(R.id.tvServicio)
-        val fecha: TextView = view.findViewById(R.id.tvDia)
-        val hora: TextView = view.findViewById(R.id.tvHora)
-        val lugar: TextView = view.findViewById(R.id.tvLugar)
+        val tvServicio: TextView = view.findViewById(R.id.tvServicio)
+        val tvDia: TextView = view.findViewById(R.id.tvDia)
+        val tvHora: TextView = view.findViewById(R.id.tvHora)
+        val tvLugar: TextView = view.findViewById(R.id.tvLugar)
         val btnCancelar: Button = view.findViewById(R.id.btnCancelar)
     }
 
@@ -31,18 +31,13 @@ class ReservasAdapter(
     override fun onBindViewHolder(holder: ReservaViewHolder, position: Int) {
         val cita = listaCitas[position]
 
-        // --- AQUÍ CONECTAMOS LOS DATOS REALES DE TU BACKEND ---
+        // Asignamos los textos manualmente
+        holder.tvServicio.text = cita.servicio.nombre
+        holder.tvDia.text = cita.fecha
+        holder.tvHora.text = cita.hora
+        holder.tvLugar.text = cita.peluqueria.nombre
 
-        // Accedemos al objeto anidado 'servicio' para sacar el nombre
-        holder.servicio.text = cita.servicio.nombre
-
-        holder.fecha.text = cita.fecha
-        holder.hora.text = cita.hora
-
-        // Accedemos al objeto anidado 'peluqueria' para sacar nombre y dirección
-        holder.lugar.text = "${cita.peluqueria.nombre} - ${cita.peluqueria.direccion}"
-
-        // Configurar botón cancelar
+        // Configuramos el botón
         holder.btnCancelar.setOnClickListener {
             onCancelarClick(cita)
         }

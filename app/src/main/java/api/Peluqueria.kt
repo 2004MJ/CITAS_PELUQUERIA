@@ -6,5 +6,7 @@ data class Peluqueria(
     // Así, si no se lo pasamos (como en la reserva), Kotlin no se queja.
     val nombre: String = "",
     val direccion: String = "",
-    val telefono: String = ""
+    val telefono: String = "",
+    val latitud: Double = 0.0,
+    val longitud: Double = 0.0
 )

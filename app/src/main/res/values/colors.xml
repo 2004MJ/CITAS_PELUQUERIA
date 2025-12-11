@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="bg_dark">#121212</color>       <color name="card_dark">#1E1E1E</color>     <color name="gold_primary">#D4AF37</color>  <color name="gold_light">#F4C430</color>    <color name="text_grey">#B0B0B0</color>     <color name="purple_700">#1F1B24</color>    <color name="purple_200">#BB86FC</color>
+    <color name="teal_200">#03DAC5</color>
 </resources>
