@@ -179,6 +179,25 @@ class ReservaFragment : Fragment() {
                         btnConfirmar.isEnabled = true
                         btnConfirmar.text = "CONFIRMAR ($fecha - $horaClick)"
                     }
+
+                    // =========================================================
+                    // 👇 INICIO DEL CÓDIGO AÑADIDO (AUTO SCROLL) 👇
+                    // =========================================================
+                    tvTituloHoras.post {
+                        val root = view // Obtenemos la vista raíz del fragmento
+                        // Si tu XML principal usa NestedScrollView (recomendado)
+                        if (root is androidx.core.widget.NestedScrollView) {
+                            root.smoothScrollTo(0, tvTituloHoras.top)
+                        }
+                        // O si usa el ScrollView clásico
+                        else if (root is android.widget.ScrollView) {
+                            root.smoothScrollTo(0, tvTituloHoras.top)
+                        }
+                    }
+                    // =========================================================
+                    // 👆 FIN DEL CÓDIGO AÑADIDO 👆
+                    // =========================================================
+
                 }
             }
             override fun onFailure(call: Call<List<String>>, t: Throwable) {

@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.citas_peluqueria.api.Cita
-import com.example.citas_peluqueria.api.RetrofitClient // Asegúrate que este import es correcto
+import com.example.citas_peluqueria.api.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,7 +80,7 @@ class HomeFragment : Fragment(), SensorEventListener {
                         val proxima = obtenerCitaMasCercana(lista)
 
                         if (proxima != null) {
-                            textView.text = "Próxima: ${proxima.fecha} a las ${proxima.hora}"
+                            textView.text = "Próxima cita: ${proxima.fecha} a las ${proxima.hora}"
                         } else {
                             textView.text = "No tienes citas futuras."
                         }

@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton // Import necesario para el botón
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 // IMPORTS DE TU API
 import com.example.citas_peluqueria.api.Cita
@@ -59,8 +59,17 @@ class MisReservasFragment : Fragment() {
                     // Recibimos la lista de citas del servidor
                     val listaCitas = response.body() ?: emptyList()
 
-                    // Convertimos a MutableList para poder borrar elementos dinámicamente
-                    val listaMutable = listaCitas.toMutableList()
+                    // -----------------------------------------------------------
+                    // 👇 AQUÍ ESTÁ EL CAMBIO: ORDENAR POR FECHA Y LUEGO HORA 👇
+                    // -----------------------------------------------------------
+                    val listaOrdenada = listaCitas.sortedWith(compareBy(
+                        { it.fecha }, // Primero mira la fecha (ej: 2025-12-25)
+                        { it.hora }   // Si coincide fecha, mira la hora (ej: 10:00)
+                    ))
+                    // -----------------------------------------------------------
+
+                    // Convertimos la lista YA ORDENADA a MutableList
+                    val listaMutable = listaOrdenada.toMutableList()
 
                     // Configuramos el adaptador
                     adapter = ReservasAdapter(listaMutable) { citaAborrar ->
